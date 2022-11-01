@@ -1,13 +1,29 @@
 <template>
   <div>
-    <HomeCard v-for="home in homes" :key="home.objectID" :home="home" />
+    <div v-for="home in homes" :key="home.objectID">
+      <nuxt-link :to="`/home/${home.objectID}`" prefetch
+        ><HomeCard :home="home"
+      /></nuxt-link>
+    </div>
   </div>
 </template>
 
 <script>
-import homes from "~/homes";
+import homes from "~/data/homes";
 
 export default {
+  head() {
+    return {
+      title: "Home Page",
+      meta: [
+        {
+          name: "description",
+          content: "This is a homepage!",
+          hid: "description",
+        },
+      ],
+    };
+  },
   data() {
     return {
       homes: homes.slice(0, 3),
