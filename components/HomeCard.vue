@@ -6,17 +6,16 @@
     {{ home.location.state }}
     {{ home.guests }} guests <br />
     {{ home.pricePerNight }} / night
-    <br />
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    home: {
-      type: Object,
-      required: true,
+  export default {
+    props: {
+      home: {
+        type: Object,
+        required: true,
+      },
     },
-  },
-};
+  };
 </script>

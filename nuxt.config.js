@@ -15,6 +15,12 @@ export default {
         content: "width=device-width, initial-scale=1",
       },
     ],
+    script: [
+      {
+        crossorigin: "anonymous",
+        src: "https://polyfill.io/v3/polyfill.min.js?features=Intl%2Cblissfuljs%2Ces2015",
+      },
+    ],
     htmlAttrs: {
       lang: "en",
     },
@@ -25,4 +31,5 @@ export default {
   router: {
     prefetchLinks: false,
   },
+  plugins: ["~/plugins/maps.client.js", "~/plugins/dataApi.js"],
 };

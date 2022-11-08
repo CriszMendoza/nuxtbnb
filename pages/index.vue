@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="home in homes" :key="home.objectID">
-      <nuxt-link :to="`/home/${home.objectID}`" prefetch
+      <nuxt-link :to="`/home/${home.objectID}`"
         ><HomeCard :home="home"
       /></nuxt-link>
     </div>
@@ -9,8 +9,6 @@
 </template>
 
 <script>
-import homes from "~/data/homes";
-
 export default {
   head() {
     return {
@@ -24,9 +22,13 @@ export default {
       ],
     };
   },
-  data() {
+  async asyncData({ $dataApi: { getHomes }, error }) {
+    const { json, ok, statusCode, message } = await getHomes();
+
+    if (!ok) return error({ statusCode, message });
+
     return {
-      homes: homes.slice(0, 3),
+      homes: json.hits.slice(0, 3),
     };
   },
 };
