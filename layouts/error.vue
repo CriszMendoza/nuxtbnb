@@ -1,28 +1,27 @@
 <template>
   <div style="text-align: center">
+    <h1>{{ error.message }} {{ error.statusCode }}</h1>
     <img
-      src="https://i.pinimg.com/originals/c5/21/64/c52164749f7460c1ededf8992cd9a6ec.jpg"
+      src="https://acegif.com/wp-content/uploads/funny-falling-4.gif"
+      alt="Error funny"
     />
-    <br /><br /><br />
-    <h1>Error!</h1>
-    {{ error.message }} {{ error.statusCode }}
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    error: {
-      type: Object,
-      required: true,
+  export default {
+    head() {
+      return {
+        title: this.error.message,
+      };
     },
-  },
-  head() {
-    return {
-      title: "BIG PROBLEMS",
-    };
-  },
-};
+    props: {
+      error: {
+        type: Object,
+        required: true,
+      },
+    },
+  };
 </script>
 
 <style></style>

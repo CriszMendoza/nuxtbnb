@@ -1,22 +1,24 @@
 <template>
-  <div>
-    <span>{{ displatText }}</span>
+  <span>
+    {{ displayText }}
     <br />
     <button
-      v-if="!isExpanded && isTooLong"
+      v-if="isTooLong && !isExpanded"
       @click="isExpanded = true"
+      type="button"
       class="link"
     >
       read more
     </button>
     <button
-      v-if="isExpanded && isTooLong"
+      v-if="isTooLong && isExpanded"
       @click="isExpanded = false"
+      type="button"
       class="link"
     >
       read less
     </button>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -37,11 +39,14 @@
         required: true,
       },
     },
+    created() {
+      this.chunks = this.getChunks();
+    },
     computed: {
       isTooLong() {
         return this.chunks.length === 2;
       },
-      displatText() {
+      displayText() {
         if (!this.isTooLong || this.isExpanded) return this.chunks.join(" ");
         return this.chunks[0] + "...";
       },
@@ -50,17 +55,15 @@
       getChunks() {
         const position = this.text.indexOf(" ", this.target);
 
-        if (this.text.length <= this.target || position === -1)
+        if (position === -1 || this.text.length <= this.target) {
           return [this.text];
+        }
 
         return [
           this.text.substring(0, position),
           this.text.substring(position),
         ];
       },
-    },
-    created() {
-      this.chunks = this.getChunks();
     },
   };
 </script>

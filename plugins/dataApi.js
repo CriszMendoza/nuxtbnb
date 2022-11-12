@@ -1,18 +1,23 @@
-export default (context, inject) => {
-  const appID = "0VGW1ILZPF";
-  const apiKey = "62a09516768ec4ba30bcfe68d355bf2e";
-  const url = `https://${appID}-dsn.algolia.net/1/indexes`;
+export default async (context, inject) => {
+  const url = `https://${process.env.ALGOLIA_ID}-dsn.algolia.net/1/indexes`;
   const headers = {
-    "X-Algolia-API-Key": apiKey,
-    "X-Algolia-Application-Id": appID,
+    "X-Algolia-API-Key": process.env.ALGOLIA_APIKEY,
+    "X-Algolia-Application-Id": process.env.ALGOLIA_ID,
   };
 
   const unWrap = async (response) => {
     const { ok, status, statusText } = response;
+
+    if (!ok) {
+      return {
+        ok,
+        statusCode: status,
+        message: statusText,
+      };
+    }
+
     return {
       ok,
-      statusCode: status,
-      message: statusText,
       json: await response.json(),
     };
   };
@@ -24,24 +29,23 @@ export default (context, inject) => {
     json: {},
   });
 
-  const apiGet = async (url) => {
+  const get = async (url) => {
     try {
-      return unWrap(await fetch(url, { headers }));
+      return await unWrap(await fetch(url, { headers }));
     } catch (error) {
       return getErrorResponse(error);
     }
   };
 
-  const apiPost = async (url, homeId) => {
+  const post = async (url, body) => {
     try {
-      return unWrap(
+      return await unWrap(
         await fetch(url, {
           headers,
           method: "POST",
           body: JSON.stringify({
-            filters: `homeId:${homeId}`,
-            hitsPerPage: 6,
             attributesToHighlight: [],
+            ...body,
           }),
         })
       );
@@ -50,43 +54,32 @@ export default (context, inject) => {
     }
   };
 
-  const apiPostLocation = async (url, lat, lng, radiusInMeters) => {
-    try {
-      return unWrap(
-        await fetch(url, {
-          headers,
-          method: "POST",
-          body: JSON.stringify({
-            aroundLatLng: `${lat},${lng}`,
-            aroundRadius: radiusInMeters,
-            hitsPerPage: 10,
-            attributesToHighlight: [],
-          }),
-        })
-      );
-    } catch (error) {
-      return getErrorResponse(error);
-    }
-  };
-
-  const getHome = async (homeID) => await apiGet(`${url}/homes/${homeID}`);
-
-  const getHomes = async () => await apiGet(`${url}/homes/`);
+  const getHome = async (homeID) => await get(`${url}/homes/${homeID}`);
+  const getHomes = async () => await get(`${url}/homes`);
 
   const getReviewsByHomeId = async (homeID) =>
-    await apiPost(`${url}/reviews/query`, homeID);
+    await post(`${url}/reviews/query`, {
+      filters: `homeId:${homeID}`,
+    });
 
   const getUserByHomeId = async (homeID) =>
-    await apiPost(`${url}/users/query`, homeID);
+    await post(`${url}/users/query`, {
+      filters: `homeId:${homeID}`,
+      hitsPerPage: 6,
+    });
 
-  const getUserByLocation = async (lat, lng, radiusInMeters = 1500) =>
-    await apiPostLocation(`${url}/homes/query`, lat, lng, radiusInMeters);
+  const getHomeByLocation = async (lat, lng, radiusInMeters = 1500) =>
+    await post(`${url}/homes/query`, {
+      aroundLatLng: `${lat},${lng}`,
+      aroundRadius: radiusInMeters,
+      hitsPerPage: 10,
+    });
 
   inject("dataApi", {
     getHome,
     getHomes,
     getReviewsByHomeId,
     getUserByHomeId,
-    getUserByLocation,
+    getHomeByLocation,
   });
 };

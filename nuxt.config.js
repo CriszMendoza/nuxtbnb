@@ -1,24 +1,14 @@
 export default {
-  components: true,
   server: {
-    host: "0.0.0.0",
     port: 3000,
+    host: "0.0.0.0",
   },
+  components: true,
   head: {
-    titleTemplate: "%s - Nuxt",
-    meta: [
+    titleTemplate: "Mastering Nuxt: %s",
+    head: [
       {
-        charset: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-    ],
-    script: [
-      {
-        crossorigin: "anonymous",
-        src: "https://polyfill.io/v3/polyfill.min.js?features=Intl%2Cblissfuljs%2Ces2015",
+        charser: "utf-8",
       },
     ],
     htmlAttrs: {
@@ -31,5 +21,6 @@ export default {
   router: {
     prefetchLinks: false,
   },
-  plugins: ["~/plugins/maps.client.js", "~/plugins/dataApi.js"],
+  plugins: ["~/plugins/maps.client", "~/plugins/dataApi"],
+  buildModules: ["@nuxtjs/dotenv"],
 };

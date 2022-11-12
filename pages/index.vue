@@ -1,35 +1,41 @@
 <template>
   <div>
-    <div v-for="home in homes" :key="home.objectID">
-      <nuxt-link :to="`/home/${home.objectID}`"
-        ><HomeCard :home="home"
-      /></nuxt-link>
+    <div
+      v-for="home in homes"
+      :key="home.objectID"
+      style="float: left; margin: 10px"
+    >
+      <nuxt-link :to="`/home/${home.objectID}`" prefetch>
+        <home-card :home="home" />
+      </nuxt-link>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  head() {
-    return {
-      title: "Home Page",
-      meta: [
-        {
-          name: "description",
-          content: "This is a homepage!",
-          hid: "description",
-        },
-      ],
-    };
-  },
-  async asyncData({ $dataApi: { getHomes }, error }) {
-    const { json, ok, statusCode, message } = await getHomes();
+  export default {
+    head() {
+      return {
+        title: "Homepage",
+        meta: [
+          {
+            name: "description",
+            content: "This is a hompage!",
+            id: "description",
+          },
+        ],
+      };
+    },
+    async asyncData({ $dataApi, error }) {
+      const response = await $dataApi.getHomes();
 
-    if (!ok) return error({ statusCode, message });
+      if (!response.ok) return error(response);
 
-    return {
-      homes: json.hits.slice(0, 3),
-    };
-  },
-};
+      return {
+        homes: response.json.hits,
+      };
+    },
+  };
 </script>
+
+<style></style>
